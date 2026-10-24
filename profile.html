@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account & Profile - SwiftCart</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col font-sans">
+
+    <!-- 1. Header with Fast Switching to Both Store Pages -->
+    <header class="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20 gap-4">
+                
+                <!-- Brand & Home link -->
+                <div class="flex items-center gap-3">
+                    <a href="swiftcart_app.html" class="flex items-center gap-2 group">
+                        <div class="bg-brand-700 text-white w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-black text-xl italic group-hover:bg-brand-800 transition-colors">
+                            S
+                        </div>
+                <!-- Navigation buttons connecting to the existing apps -->
+                <div class="flex items-center gap-2 md:gap-3">
+                    <!-- Link to Admin Operations Command Center -->
+                    <a href="admin_analytics.html" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-semibold rounded-xl bg-slate-900 text-purple-300 hover:bg-slate-800 transition-all border border-slate-700" title="Dark Store & Fleet Telemetry">
+                        <i class="fas fa-chart-line text-purple-400"></i>
+                        <span>Ops Admin</span>
+                    </a>
+
+                    <!-- Link to Live Rider Tracking -->
+                    <a href="rider_tracking.html" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-semibold rounded-xl bg-amber-50 text-amber-800 hover:bg-amber-100 transition-all border border-amber-200">
+                        <i class="fas fa-motorcycle text-amber-600 animate-pulse"></i>
+                        <span>Track Rider</span>
+                    </a>
+
+                    <!-- Link to SwiftCart Main App -->
+                    <a href="swiftcart_app.html" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-semibold rounded-xl bg-purple-50 text-brand-700 hover:bg-brand-100 transition-all border border-brand-200">
+                        <i class="fas fa-bolt text-yellow-500"></i>
+                        <span>SwiftCart Store</span>
+                    </a>
+
+                    <!-- Link to QuickCart / Prototype Page -->
+                    <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-semibold rounded-xl bg-green-50 text-emerald-700 hover:bg-emerald-100 transition-all border border-emerald-200">
+                        <i class="fas fa-shopping-basket text-emerald-600"></i>
+                        <span class="hidden sm:inline">QuickCart</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. Main Container with Sidebar + Dynamic Tabs -->
+    <main id="account-gate" class="flex-grow max-w-xl mx-auto px-4 py-10 md:py-16 w-full">
+        <section class="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 shadow-sm">
+            <h1 id="auth-title" class="text-2xl font-extrabold text-gray-900">Sign in to SwiftCart</h1>
+            <p class="text-sm text-gray-500 mt-2">Use your phone number and password to see your orders and check out with saved details.</p>
+            <div class="mt-5 flex gap-2">
+                <button id="login-mode-button" type="button" onclick="setAuthMode('login')" class="flex-1 bg-brand-700 text-white font-bold py-2.5 rounded-xl">Sign in</button>
+                <button id="register-mode-button" type="button" onclick="setAuthMode('register')" class="flex-1 bg-gray-100 text-gray-700 font-bold py-2.5 rounded-xl">Create account</button>
+            </div>
+            <form id="auth-form" class="mt-5 space-y-4">
+                <div id="register-fields" class="hidden space-y-4">
+                    <label class="block text-sm font-semibold text-gray-700">Full name
+                        <input id="auth-name" type="text" maxlength="255" autocomplete="name" class="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:border-brand-600">
+                    </label>
+                    <label class="block text-sm font-semibold text-gray-700">Email (optional)
+                        <input id="auth-email" type="email" maxlength="255" autocomplete="email" class="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:border-brand-600">
+                    </label>
+                    <label class="block text-sm font-semibold text-gray-700">Delivery address
+                        <textarea id="auth-address" minlength="5" maxlength="2000" autocomplete="street-address" rows="3" class="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:border-brand-600"></textarea>
+                    </label>
+                </div>
+                <label class="block text-sm font-semibold text-gray-700">Phone number
+                    <input id="auth-phone" type="tel" required inputmode="tel" autocomplete="tel" placeholder="98765 43210" class="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:border-brand-600">
+                </label>
+                <label class="block text-sm font-semibold text-gray-700">Password
+                    <input id="auth-password" type="password" required minlength="8" maxlength="128" autocomplete="current-password" class="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:border-brand-600">
+                </label>
+                <p id="password-hint" class="hidden text-xs text-gray-500">Use at least 8 characters.</p>
+                <button id="auth-submit-button" type="submit" class="w-full bg-brand-700 hover:bg-brand-800 text-white font-bold py-3 rounded-xl">Sign in</button>
+            </form>
+            <p id="auth-message" class="hidden mt-4 text-sm text-rose-700" role="alert"></p>
+        </section>
+    </main>
+
+    <main id="profile-content" class="hidden flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-start">
+            
+            <!-- Left Column: User Profile Card & Navigation Tabs -->
+            <aside class="lg:col-span-4 bg-white rounded-2xl border border-gray-100 p-5 md:p-6 shadow-sm">
+                <!-- User Basic Details -->
+                <div class="flex items-center gap-4 pb-6 border-b border-gray-100">
+                    <div class="relative">
+                        <img id="avatar-preview" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" alt="User Profile" class="w-16 h-16 rounded-full object-cover border-2 border-brand-500 p-0.5">
+                        <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full" title="Active"></span>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-1.5">
+                            <h2 id="sidebar-name" class="font-bold text-gray-900 text-lg leading-tight">Rohit Sharma</h2>
+                            <i class="fas fa-circle-check text-brand-600 text-sm" title="Verified Member"></i>
+                        </div>
+                        <p id="sidebar-phone" class="text-xs text-gray-500 mt-0.5">+91 98765 43210</p>
+                        <span class="inline-block mt-1 text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">
+                            ★ VIP 10-Min Club
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Fast Balance & Order Counters -->
+                <div class="grid grid-cols-2 gap-3 my-5">
+                    <div class="bg-brand-50/70 p-3 rounded-xl border border-brand-100 text-center">
+                        <span class="text-[11px] font-bold text-brand-700 uppercase tracking-wider block">Wallet Balance</span>
+                        <span class="text-xl font-extrabold text-brand-900">₹340</span>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
+                        <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Total Orders</span>
+                        <span id="orders-count" class="text-xl font-extrabold text-gray-800">0</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Tab Buttons -->
+                <nav class="space-y-1.5" id="nav-tabs">
+                    <button onclick="switchTab('orders')" id="btn-orders" class="tab-button w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-brand-700 text-white shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-bag-shopping w-5 text-center"></i>
+                            <span>Orders & Reorder</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-xs opacity-75"></i>
+                    </button>
+
+                    <button onclick="switchTab('addresses')" id="btn-addresses" class="tab-button w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-location-dot w-5 text-center text-gray-400"></i>
+                            <span>Saved Addresses</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-xs opacity-75"></i>
+                    </button>
+
+                    <button onclick="switchTab('wallet')" id="btn-wallet" class="tab-button w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-wallet w-5 text-center text-gray-400"></i>
+                            <span>SwiftPay & Cards</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-xs opacity-75"></i>
+                    </button>
+
+                    <button onclick="switchTab('settings')" id="btn-settings" class="tab-button w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-user-gear w-5 text-center text-gray-400"></i>
+                            <span>Profile Settings</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-xs opacity-75"></i>
+                    </button>
+                </nav>
+
+                <!-- Help & Quick Return Box -->
+                <div class="mt-6 pt-5 border-t border-gray-100">
+                    <div class="bg-gradient-to-br from-purple-50 to-indigo-50 border border-brand-100 rounded-xl p-3.5">
+                        <div class="flex items-center gap-2 font-bold text-xs text-brand-900 mb-1">
+                            <i class="fas fa-headset text-brand-600"></i> Need instant help?
+                        </div>
+                        <p class="text-[12px] text-gray-600 mb-3">Our 24/7 dark store support is 1 tap away.</p>
+                        <button onclick="showToast('Customer support chat initiated!')" class="w-full bg-white hover:bg-brand-50 text-brand-700 border border-brand-200 text-xs font-bold py-2 rounded-lg transition-colors shadow-2xs">
+                            Chat with Support
+                        </button>
+                    </div>
+                </div>
+                <button onclick="signOut()" class="mt-4 text-xs font-semibold text-rose-600 hover:text-rose-800">Sign out</button>
+            </aside>
+
+            <!-- Right Column: Tab Content Area -->
+            <section class="lg:col-span-8 space-y-6">
+
+                <!-- TAB 1: ORDERS & REORDERS -->
+                <div id="tab-orders" class="tab-content bg-white rounded-2xl border border-gray-100 p-5 md:p-6 shadow-sm">
+                    <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">Your Past Orders</h3>
+                            <p class="text-xs text-gray-500">Track past orders or reorder items with 1 click</p>
+                        </div>
+                        <button onclick="refreshOrders()" class="text-xs font-semibold bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-200">Refresh orders</button>
+                    </div>
+
+                    <div id="customer-orders" class="space-y-4" aria-live="polite">
+                        <p class="text-sm text-gray-500">Loading your orders...</p>
+                    </div>
+                </div>
+
+                <!-- TAB 2: SAVED ADDRESSES -->
+                <div id="tab-addresses" class="tab-content hidden bg-white rounded-2xl border border-gray-100 p-5 md:p-6 shadow-sm">
+                    <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">Delivery Addresses</h3>
+                            <p class="text-xs text-gray-500">Pick where your 10-minute grocery packs arrive</p>
+                        </div>
+                    </div>
+
+                    <div id="address-grid" class="grid grid-cols-1 gap-4"></div>
+                </div>
+
+                <!-- TAB 3: WALLET & SWIFTPAY -->
+                <div id="tab-wallet" class="tab-content hidden bg-white rounded-2xl border border-gray-100 p-5 md:p-6 shadow-sm">
+                    <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">SwiftPay Wallet & Cards</h3>
+                            <p class="text-xs text-gray-500">Manage instant 1-tap checkout balance & saved methods</p>
+                        </div>
+                        <span class="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+                            Instant Refunds Active
+                        </span>
+                    </div>
+
+                    <!-- Wallet Card Banner -->
+                    <div class="bg-gradient-to-r from-brand-900 via-brand-700 to-purple-600 rounded-2xl p-5 text-white mb-6 shadow-md flex flex-wrap justify-between items-center gap-4">
+                        <div>
+                            <span class="text-xs uppercase tracking-wider text-purple-200 font-bold block mb-1">Available SwiftPay Cash</span>
+                            <div class="text-3xl font-extrabold tracking-tight">₹340.00</div>
+                            <p class="text-xs text-purple-200 mt-1">Get 5% cashback auto-credited on every ₹499+ cart</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="addMoneyModal()" class="bg-white text-brand-900 font-bold px-4 py-2.5 rounded-xl text-xs hover:bg-purple-50 transition-colors shadow">
+                                + Add Money
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Saved Payment Methods -->
+                    <h4 class="font-bold text-gray-900 text-sm mb-3">Saved UPI & Cards</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3.5 border border-gray-100 rounded-xl bg-gray-50/50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-brand-700 font-bold text-sm">
+                                    UPI
+                                </div>
+                                <div>
+                                    <p class="font-bold text-sm text-gray-900">Google Pay / PhonePe UPI</p>
+                                    <p class="text-xs text-gray-500">rohit.sharma@okhdfcbank</p>
+                                </div>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Verified</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3.5 border border-gray-100 rounded-xl bg-gray-50/50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-blue-600 font-bold text-xs">
+                                    <i class="fab fa-cc-visa text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-sm text-gray-900">HDFC Bank Debit Card</p>
+                                    <p class="text-xs text-gray-500">•••• •••• •••• 4092 (Expires 08/29)</p>
+                                </div>
+                            </div>
+                            <button onclick="showToast('Card removed')" class="text-gray-400 hover:text-red-500 text-xs">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: PROFILE SETTINGS -->
+                <div id="tab-settings" class="tab-content hidden bg-white rounded-2xl border border-gray-100 p-5 md:p-6 shadow-sm">
+                    <div class="pb-4 border-b border-gray-100 mb-5">
+                        <h3 class="text-xl font-bold text-gray-900">Personal Information</h3>
+                        <p class="text-xs text-gray-500">Update your delivery contact info and communication choices</p>
+                    </div>
+
+                    <form id="profile-form" onsubmit="saveProfile(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Full Name</label>
+                                <input type="text" id="input-name" required maxlength="255" class="w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-brand-600 focus:ring-1 focus:ring-brand-600 rounded-xl p-2.5 text-sm outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Mobile Number (Non-editable)</label>
+                                <input type="text" id="input-phone" disabled class="w-full bg-gray-100 border border-gray-200 text-gray-500 cursor-not-allowed rounded-xl p-2.5 text-sm outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Email Address</label>
+                            <input type="email" id="input-email" class="w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-brand-600 focus:ring-1 focus:ring-brand-600 rounded-xl p-2.5 text-sm outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Delivery Address</label>
+                            <textarea id="input-address" required minlength="5" maxlength="2000" rows="3" class="w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-brand-600 focus:ring-1 focus:ring-brand-600 rounded-xl p-2.5 text-sm outline-none transition-all"></textarea>
+                        </div>
+                        <div class="pt-4 border-t border-gray-100">
+                            <h4 class="font-bold text-gray-900 text-sm mb-3">Change password</h4>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">Current password (if already set)
+                                <input type="password" id="current-password" autocomplete="current-password" maxlength="128" class="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:border-brand-600">
+                            </label>
+                            <label class="block text-xs font-bold text-gray-700">New password
+                                <input type="password" id="new-password" autocomplete="new-password" minlength="8" maxlength="128" class="mt-1 w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm outline-none focus:border-brand-600">
+                            </label>
+                            <button type="button" onclick="changePassword()" class="mt-3 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-xl text-xs font-bold">Update password</button>
+                        </div>
+
+                        <!-- Notification toggles -->
+                        <div class="pt-2 border-t border-gray-100 space-y-3">
+                            <h4 class="font-bold text-gray-900 text-sm">Preferences & Alerts</h4>
+                            
+                            <label class="flex items-center justify-between cursor-pointer">
+                                <div>
+                                    <span class="text-sm font-semibold text-gray-800 block">WhatsApp Order Updates</span>
+                                    <span class="text-xs text-gray-500">Receive live 10-minute ETA and delivery rider phone link</span>
+                                </div>
+                                <input type="checkbox" checked class="w-4 h-4 text-brand-600 rounded focus:ring-brand-500 border-gray-300">
+                            </label>
+
+                            <label class="flex items-center justify-between cursor-pointer">
+                                <div>
+                                    <span class="text-sm font-semibold text-gray-800 block">Promotional Offers & Discounts</span>
+                                    <span class="text-xs text-gray-500">Alerts for 50% OFF flash sales & weekend kirana deals</span>
+                                </div>
+                                <input type="checkbox" class="w-4 h-4 text-brand-600 rounded focus:ring-brand-500 border-gray-300">
+                            </label>
+                        </div>
+
+                        <div class="pt-4 flex justify-end gap-3">
+                            <button type="button" onclick="showToast('Changes discarded')" class="px-4 py-2 border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-xl text-sm font-semibold transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-5 py-2 bg-brand-700 hover:bg-brand-800 text-white rounded-xl text-sm font-bold shadow-md transition-all">
+                                Save Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Add Address Modal -->
+    <div id="address-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <div class="flex justify-between items-center pb-3 border-b border-gray-100 mb-4">
+                <h3 class="font-bold text-lg text-gray-900">Add New Address</h3>
+                <button onclick="closeAddressModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-800">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            
+            <form onsubmit="handleNewAddress(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Address Label</label>
+                    <div class="flex gap-2">
+                        <label class="flex-1 text-center py-1.5 border border-brand-500 bg-brand-50 text-brand-700 font-bold text-xs rounded-lg cursor-pointer">
+                            <input type="radio" name="addr-type" value="Home" checked class="hidden"> Home
+                        </label>
+                        <label class="flex-1 text-center py-1.5 border border-gray-200 text-gray-600 font-semibold text-xs rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="addr-type" value="Work" class="hidden"> Work
+                        </label>
+                        <label class="flex-1 text-center py-1.5 border border-gray-200 text-gray-600 font-semibold text-xs rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="addr-type" value="Other" class="hidden"> Other
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">House / Flat / Building</label>
+                    <input type="text" required placeholder="e.g. Flat 301, Silver Crest" class="w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-brand-600 rounded-xl p-2.5 text-xs outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Area / Street / Colony</label>
+                    <input type="text" required placeholder="e.g. Vijay Nagar, Scheme 54" class="w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-brand-600 rounded-xl p-2.5 text-xs outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">City</label>
+                        <input type="text" value="Indore" class="w-full bg-gray-100 border border-gray-200 rounded-xl p-2.5 text-xs outline-none text-gray-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Pin Code</label>
+                        <input type="text" required placeholder="452010" maxlength="6" class="w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-brand-600 rounded-xl p-2.5 text-xs outline-none">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full mt-2 bg-brand-700 hover:bg-brand-800 text-white font-bold py-2.5 rounded-xl text-sm transition-colors">
+                    Save Address
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification for clean feedback without using alert() -->
+    <div id="toast-msg" class="fixed bottom-6 right-6 bg-gray-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50 border border-gray-700 pointer-events-none">
+        <i class="fas fa-check-circle text-green-400 text-sm"></i>
+        <span id="toast-text">Message</span>
+    </div>
+
+    <script>
+        let activeCustomer = null;
+        let authMode = 'login';
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[character]);
+        }
+
+        function setAuthMessage(message, isError = true) {
+            const element = document.getElementById('auth-message');
+            element.textContent = message;
+            element.classList.toggle('text-rose-700', isError);
+            element.classList.toggle('text-emerald-700', !isError);
+            element.classList.toggle('hidden', !message);
+        }
+
+        async function requestJson(url, options = {}) {
+            const response = await fetch(url, {
+                ...options,
+                headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                const error = new Error(result.error || `Request failed (${response.status})`);
+                throw error;
+            }
+            return result;
+        }
+
+        function setAuthMode(mode) {
+            authMode = mode;
+            const isRegistering = mode === 'register';
+            document.getElementById('auth-title').textContent = isRegistering ? 'Create your SwiftCart account' : 'Sign in to SwiftCart';
+            document.getElementById('register-fields').classList.toggle('hidden', !isRegistering);
+            document.getElementById('auth-name').required = isRegistering;
+            document.getElementById('auth-address').required = isRegistering;
+            document.getElementById('password-hint').classList.toggle('hidden', !isRegistering);
+            document.getElementById('auth-password').autocomplete = isRegistering ? 'new-password' : 'current-password';
+            document.getElementById('auth-submit-button').textContent = isRegistering ? 'Create account' : 'Sign in';
+            document.getElementById('login-mode-button').className = isRegistering
+                ? 'flex-1 bg-gray-100 text-gray-700 font-bold py-2.5 rounded-xl'
+                : 'flex-1 bg-brand-700 text-white font-bold py-2.5 rounded-xl';
+            document.getElementById('register-mode-button').className = isRegistering
+                ? 'flex-1 bg-brand-700 text-white font-bold py-2.5 rounded-xl'
+                : 'flex-1 bg-gray-100 text-gray-700 font-bold py-2.5 rounded-xl';
+            setAuthMessage('');
+        }
+
+        function showProfile(customer) {
+            activeCustomer = customer;
+            document.getElementById('account-gate').classList.add('hidden');
+            document.getElementById('profile-content').classList.remove('hidden');
+            document.getElementById('sidebar-name').textContent = customer.name;
+            document.getElementById('sidebar-phone').textContent = `+${customer.phone}`;
+            document.getElementById('input-name').value = customer.name;
+            document.getElementById('input-phone').value = `+${customer.phone}`;
+            document.getElementById('input-email').value = customer.email || '';
+            document.getElementById('input-address').value = customer.address;
+            document.getElementById('address-grid').innerHTML = `
+                <div class="border-2 border-brand-600 rounded-xl p-4 bg-brand-50/20">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <i class="fas fa-house text-brand-700 text-sm"></i>
+                        <h4 class="font-bold text-gray-900 text-sm">Saved delivery address</h4>
+                    </div>
+                    <p class="text-xs text-gray-600 leading-relaxed">${escapeHtml(customer.address)}</p>
+                    <p class="text-[11px] text-gray-400 mt-2"><i class="fas fa-phone text-[10px]"></i> +${escapeHtml(customer.phone)}</p>
+                </div>`;
+        }
+
+        function renderOrders(orders) {
+            const container = document.getElementById('customer-orders');
+            if (!orders.length) {
+                container.innerHTML = '<p class="text-sm text-gray-500">No orders found for this account yet.</p>';
+                return;
+            }
+
+            container.innerHTML = orders.map((order) => {
+                const status = String(order.orderStatus || 'UNKNOWN').toUpperCase();
+                const statusColor = status === 'DELIVERED'
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : status === 'CANCELLED'
+                        ? 'bg-rose-100 text-rose-800'
+                        : 'bg-amber-100 text-amber-800';
+                const items = (order.items || []).map((item) =>
+                    `${escapeHtml(item.productName)} × ${Number(item.qty)}`
+                ).join(', ');
+                const createdAt = new Date(order.createdAt).toLocaleString();
+                const itemNames = JSON.stringify((order.items || []).map((item) => item.productName));
+                return `
+                    <article class="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
+                        <div class="flex flex-wrap items-start justify-between gap-3 pb-3 border-b border-gray-100">
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="font-bold text-sm text-gray-900">Order #${escapeHtml(order.orderId)}</span>
+                                    <span class="${statusColor} text-[10px] font-bold px-2 py-0.5 rounded-md">${escapeHtml(status.replaceAll('_', ' '))}</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">${escapeHtml(createdAt)}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-extrabold text-gray-900">₹${Number(order.totalAmount).toLocaleString('en-IN')}</span>
+                                <span class="block text-[10px] text-gray-400">${escapeHtml(order.paymentStatus)}</span>
+                            </div>
+                        </div>
+                        <p class="py-3 text-xs text-gray-700"><strong>Items:</strong> ${items || 'No item details'}</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${status === 'PACKED'
+                                ? `<button data-cancel-order="${escapeHtml(order.orderId)}" class="bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-rose-200">Cancel order</button>`
+                                : status !== 'CANCELLED'
+                                    ? `<a href="rider_tracking.html?orderId=${encodeURIComponent(order.orderId)}" class="bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-lg border border-amber-200">Track order</a>`
+                                    : ''}
+                            <button data-reorder-items="${escapeHtml(itemNames)}" class="bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-brand-200">Reorder items</button>
+                        </div>
+                    </article>`;
+            }).join('');
+            document.getElementById('orders-count').textContent = String(orders.length);
+        }
+
+        async function refreshOrders() {
+            if (!activeCustomer) {
+                return;
+            }
+            try {
+                const result = await requestJson('/api/me');
+                showProfile(result.customer);
+                renderOrders(result.orders);
+            } catch (error) {
+                if (error.message === 'Sign in to view your account.') {
+                    document.getElementById('profile-content').classList.add('hidden');
+                    document.getElementById('account-gate').classList.remove('hidden');
+                    return;
+                }
+                document.getElementById('customer-orders').innerHTML =
+                    `<p class="text-sm text-rose-700">Could not refresh orders: ${escapeHtml(error.message)}</p>`;
+            }
+        }
+
+        async function cancelOrder(orderId, button) {
+            if (!window.confirm(`Cancel order ${orderId}? The items will be returned to inventory.`)) {
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = 'Cancelling...';
+            try {
+                await requestJson(`/api/orders/${encodeURIComponent(orderId)}/cancel`, {
+                    method: 'POST',
+                    body: '{}'
+                });
+                showToast(`Order ${orderId} cancelled.`);
+                await refreshOrders();
+            } catch (error) {
+                showToast(`Could not cancel order: ${error.message}`);
+                button.disabled = false;
+                button.textContent = 'Cancel order';
+            }
+        }
+
+        async function initializeAccount() {
+            document.getElementById('customer-orders').addEventListener('click', (event) => {
+                const cancelButton = event.target.closest('[data-cancel-order]');
+                if (cancelButton) {
+                    cancelOrder(cancelButton.dataset.cancelOrder, cancelButton);
+                    return;
+                }
+                const button = event.target.closest('[data-reorder-items]');
+                if (button) {
+                    triggerReorder(JSON.parse(button.dataset.reorderItems));
+                }
+            });
+            document.getElementById('auth-form').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const button = document.getElementById('auth-submit-button');
+                button.disabled = true;
+                setAuthMessage('');
+                const phone = document.getElementById('auth-phone').value.trim();
+                const password = document.getElementById('auth-password').value;
+                try {
+                    const isRegistering = authMode === 'register';
+                    const result = await requestJson(isRegistering ? '/api/auth/register' : '/api/auth/login', {
+                        method: 'POST',
+                        body: JSON.stringify(isRegistering ? {
+                            password,
+                            profile: {
+                                name: document.getElementById('auth-name').value.trim(),
+                                phone,
+                                email: document.getElementById('auth-email').value.trim(),
+                                address: document.getElementById('auth-address').value.trim()
+                            }
+                        } : { phone, password })
+                    });
+                    const returnToCheckout = new URLSearchParams(window.location.search).get('returnTo') === 'checkout';
+                    if (returnToCheckout) {
+                        window.location.href = 'index.html?checkout=1';
+                        return;
+                    }
+                    showProfile(result.customer);
+                    await refreshOrders();
+                } catch (error) {
+                    setAuthMessage(error.message);
+                } finally {
+                    button.disabled = false;
+                }
+            });
+            setAuthMode('login');
+
+            try {
+                const result = await requestJson('/api/me');
+                showProfile(result.customer);
+                renderOrders(result.orders);
+            } catch (error) {
+                if (!error.message.includes('Sign in')) {
+                    setAuthMessage(error.message);
+                }
+            }
+            window.setInterval(refreshOrders, 15000);
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeAccount);
+
+        // --- 1. Tab Switching Controller ---
+        function switchTab(tabId) {
+            // Hide all tab content panes
+            document.querySelectorAll('.tab-content').forEach(pane => {
+                pane.classList.add('hidden');
+            });
+
+            // Reset all tab button styles
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.className = "tab-button w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all";
+                const icon = btn.querySelector('i');
+                if (icon) icon.classList.replace('text-white', 'text-gray-400');
+            });
+
+            // Activate chosen tab pane
+            const targetPane = document.getElementById(`tab-${tabId}`);
+            if (targetPane) targetPane.classList.remove('hidden');
+
+            // Highlight chosen button
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "tab-button w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-brand-700 text-white shadow-sm";
+                const icon = activeBtn.querySelector('i');
+                if (icon) icon.classList.replace('text-gray-400', 'text-white');
+            }
+        }
+
+        // --- 2. Notification Toast (No alert() used) ---
+        function showToast(message) {
+            const toast = document.getElementById('toast-msg');
+            const toastText = document.getElementById('toast-text');
+            toastText.innerText = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 2600);
+        }
+
+        // --- 3. Profile Save Logic ---
+        async function saveProfile(e) {
+            e.preventDefault();
+            try {
+                const result = await requestJson('/api/me', {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        name: document.getElementById('input-name').value.trim(),
+                        email: document.getElementById('input-email').value.trim(),
+                        address: document.getElementById('input-address').value.trim()
+                    })
+                });
+                showProfile(result.customer);
+                showToast('Profile information saved successfully!');
+            } catch (error) {
+                showToast(`Could not save profile: ${error.message}`);
+            }
+        }
+
+        async function signOut() {
+            try {
+                await requestJson('/api/auth/logout', { method: 'POST', body: '{}' });
+                window.location.reload();
+            } catch (error) {
+                showToast(`Could not sign out: ${error.message}`);
+            }
+        }
+
+        async function changePassword() {
+            try {
+                await requestJson('/api/me/password', {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        currentPassword: document.getElementById('current-password').value,
+                        newPassword: document.getElementById('new-password').value
+                    })
+                });
+                document.getElementById('current-password').value = '';
+                document.getElementById('new-password').value = '';
+                showToast('Password updated successfully!');
+            } catch (error) {
+                showToast(`Could not update password: ${error.message}`);
+            }
+        }
+
+        // --- 4. Address Modal Toggles ---
+        function openAddressModal() {
+            document.getElementById('address-modal').classList.remove('hidden');
+        }
+
+        function closeAddressModal() {
+            document.getElementById('address-modal').classList.add('hidden');
+        }
+
+        function handleNewAddress(e) {
+            e.preventDefault();
+            closeAddressModal();
+            showToast('New delivery address added successfully!');
+        }
+
+        function addMoneyModal() {
+            showToast('₹200 added to SwiftPay via default UPI');
+        }
+
+        // --- 5. Bridge to Main Store: Reorder and Open Store ---
+        function triggerReorder(itemNames) {
+            showToast(`Reordering ${itemNames.join(' & ')}! Redirecting to SwiftCart...`);
+            setTimeout(() => {
+                window.location.href = 'swiftcart_app.html';
+            }, 1200);
+        }
+    </script>
+</body>
+</html>

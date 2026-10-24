@@ -1,0 +1,16 @@
+{
+  "name": "swiftcart",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SwiftCart storefront and dark-store operations dashboard",
+  "main": "backend.js",
+  "scripts": {
+    "start": "node backend.js",
+    "check": "node --check backend.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.1"
+  }
+}
